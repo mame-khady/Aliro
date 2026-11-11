@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aliro – Veille technologique INFO5</title>
+<link rel="stylesheet" href="dist/reset.css">
+<link rel="stylesheet" href="dist/reveal.css">
+<link rel="stylesheet" href="dist/theme/black.css">
+<link rel="stylesheet" href="dist/plugin/highlight/monokai.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel ="stylesheet" href="dist/style_diapo.css" >
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<symbol id="phone" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></symbol>
+<symbol id="ban" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></symbol>
+<symbol id="wallet" viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></symbol>
+<symbol id="users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+<symbol id="home" viewBox="0 0 24 24"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+<symbol id="building" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4M8 6h.01M16 6h.01M12 6h.01M12 10h.01M12 14h.01M16 10h.01M16 14h.01M8 10h.01M8 14h.01"/></symbol>
+<symbol id="cap" viewBox="0 0 24 24"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></symbol>
+<symbol id="nfc" viewBox="0 0 24 24"><path d="M6 8.32a7.43 7.43 0 0 1 0 7.36"/><path d="M9.46 6.21a11.76 11.76 0 0 1 0 11.58"/><path d="M12.91 4.1a15.91 15.91 0 0 1 .01 15.8"/><path d="M16.37 2a20.16 20.16 0 0 1 0 20"/></symbol>
+<symbol id="bt" viewBox="0 0 24 24"><path d="m7 7 10 10-5 5V2l5 5L7 17"/></symbol>
+<symbol id="radio" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><path d="M4.93 19.07a10 10 0 0 1 0-14.14M7.76 16.24a6 6 0 0 1 0-8.48M16.24 7.76a6 6 0 0 1 0 8.48M19.07 4.93a10 10 0 0 1 0 14.14"/></symbol>
+<symbol id="key" viewBox="0 0 24 24"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></symbol>
+<symbol id="refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></symbol>
+<symbol id="clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+<symbol id="zap" viewBox="0 0 24 24"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></symbol>
+<symbol id="help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></symbol>
+<symbol id="link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></symbol>
+<symbol id="lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+<symbol id="flask" viewBox="0 0 24 24"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><path d="M8.5 2h7M7 16h10"/></symbol>
+<symbol id="cal" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+</svg>
+
+<div class="reveal"><div class="slides">
+
+<section class="title-slide">
+  <svg class="art" viewBox="0 0 520 520" fill="none" stroke="#38BDF8">
+    <circle cx="260" cy="260" r="62" stroke-opacity=".9"/>
+    <circle cx="260" cy="260" r="112" stroke-opacity=".6" stroke-dasharray="3 7"/>
+    <circle cx="260" cy="260" r="162" stroke-opacity=".4"/>
+    <circle cx="260" cy="260" r="212" stroke-opacity=".25" stroke-dasharray="3 7"/>
+    <circle cx="260" cy="260" r="256" stroke-opacity=".15"/>
+    <path d="M260 4v30M260 486v30M4 260h30M486 260h30" stroke-opacity=".5"/>
+    <svg x="200" y="200" width="120" height="120" viewBox="0 0 24 24" style="stroke:#38BDF8;fill:none;stroke-width:.7;stroke-linecap:round;stroke-linejoin:round"><use href="#key"/></svg>
+  </svg>
+  <h1>Aliro</h1>
+  <p class="sub">Ouvrir une porte avec son téléphone, quelle que soit la marque</p>
+  <p class="who">Ange Noel KOUEHI &amp; Mame Khady Mbacke LEYE — Veille technologique INFO5, Polytech Grenoble</p>
+</section>
+
+<section>
+  <h2>Le problème</h2>
+  <div class="grid g3">
+    <div class="card fragment fade-up"><div class="ic"><svg class="i"><use href="#phone"/></svg></div><h3>Une appli par marque</h3><p>Chaque serrure connectée impose son application.</p></div>
+    <div class="card fragment fade-up"><div class="ic"><svg class="i"><use href="#ban"/></svg></div><h3>Rien n'est compatible</h3><p>Ta serrure ne parle pas forcément à ton Wallet.</p></div>
+    <div class="card fragment fade-up"><div class="ic"><svg class="i"><use href="#wallet"/></svg></div><h3>Changer coûte cher</h3><p>En entreprise, changer de fournisseur oblige souvent à refaire tous les badges.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>L'idée d'Aliro</h2>
+  <p class="lead">Un standard commun pour les clés numériques : la clé vit dans le Wallet du téléphone et fonctionne sur toutes les serrures compatibles.</p>
+  <ul style="margin-top:1em">
+    <li class="fragment fade-up">Même ambition que <b>Matter</b> pour la maison connectée</li>
+    <li class="fragment fade-up">Sans application propriétaire</li>
+    <li class="fragment fade-up">Un protocole de communication <b>et</b> un format d'identifiant communs</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Qui est derrière ?</h2>
+  <div class="grid g2">
+    <div class="card fragment fade-up"><div class="ic"><svg class="i"><use href="#users"/></svg></div><h3>La CSA</h3><p>Connectivity Standards Alliance, déjà à l'origine de Matter. Projet annoncé en novembre 2023 avec ASSA ABLOY comme premier partenaire.</p></div>
+    <div class="card fragment fade-up"><div class="ic"><svg class="i"><use href="#wallet"/></svg></div><h3>Les Wallets</h3><p>Apple Wallet, Google Wallet et Samsung Wallet ont des implémentations déjà observées.</p></div>
+  </div>
+  <div class="card fragment fade-up" style="margin-top:24px;display:flex;align-items:center;gap:18px;padding:16px 26px"><svg class="i"><use href="#cal"/></svg><span>Version 1.0 publiée le <b>26 février 2026</b></span></div>
+  <p class="src">Sources : CSA ; Hackster.io ; github.com/kormax/aliro</p>
+</section>
+
+<section>
+  <h2>Cas d'usage</h2>
+  <div class="grid g3">
+    <div class="card fragment fade-up"><div class="ic"><svg class="i"><use href="#home"/></svg></div><h3>Maison</h3><p>Serrure de porte d'entrée, partage avec la famille.</p></div>
+    <div class="card fragment fade-up"><div class="ic"><svg class="i"><use href="#building"/></svg></div><h3>Bureaux</h3><p>Accès aux locaux de l'entreprise avec le même téléphone.</p></div>
+    <div class="card fragment fade-up"><div class="ic"><svg class="i"><use href="#cap"/></svg></div><h3>Universités</h3><p>Salles, bâtiments et résidences.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>Les technologies radio</h2>
+  <div class="grid g3">
+    <div class="card fragment fade-up"><div class="ic"><svg class="i"><use href="#nfc"/></svg></div><h3>NFC</h3><p>On approche le téléphone, comme un paiement sans contact.</p></div>
+    <div class="card fragment fade-up"><div class="ic"><svg class="i"><use href="#bt"/></svg></div><h3>Bluetooth (BLE)</h3><p>Échanges à plus longue portée, pour l'accès mains libres.</p></div>
+    <div class="card fragment fade-up"><div class="ic"><svg class="i"><use href="#radio"/></svg></div><h3>UWB (optionnel)</h3><p>Mesure la distance pour savoir si tu es vraiment devant la porte.</p></div>
+  </div>
+  <p class="src">Sources : CSA, Aliro 1.0 ; github.com/kormax/aliro</p>
+</section>
+
+<section>
+  <h2>Comment ça marche</h2>
+  <svg viewBox="0 0 1160 420" width="100%" font-family="IBM Plex Mono, monospace" font-size="21">
+    <defs>
+      <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#38BDF8"/></marker>
+      <marker id="aw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#F59E0B"/></marker>
+    </defs>
+    <rect x="40" y="8" width="250" height="52" rx="8" fill="#111D33" stroke="#38BDF8"/>
+    <rect x="870" y="8" width="250" height="52" rx="8" fill="#111D33" stroke="#38BDF8"/>
+    <text x="165" y="42" text-anchor="middle" fill="#fff" font-family="IBM Plex Sans, sans-serif" font-size="23" font-weight="600">Téléphone (Wallet)</text>
+    <text x="995" y="42" text-anchor="middle" fill="#fff" font-family="IBM Plex Sans, sans-serif" font-size="23" font-weight="600">Lecteur (serrure)</text>
+    <path d="M165 60V410M995 60V410" stroke="#2A3F60" stroke-width="2" stroke-dasharray="6 6"/>
+    <g class="fragment" data-fragment-index="1"><path d="M985 125H175" stroke="#38BDF8" stroke-width="2" fill="none" marker-end="url(#ah)" /><text x="580" y="110" text-anchor="middle" fill="#D5E1F2"><tspan fill="#38BDF8" font-weight="500">SELECT</tspan>  choisir l'applet Aliro</text></g>
+<g class="fragment" data-fragment-index="2"><path d="M175 190H985" stroke="#38BDF8" stroke-width="2" fill="none" marker-start="url(#ah)" marker-end="url(#ah)" /><text x="580" y="175" text-anchor="middle" fill="#D5E1F2"><tspan fill="#38BDF8" font-weight="500">AUTH0</tspan>  échange de clés éphémères</text></g>
+<g class="fragment" data-fragment-index="3"><path d="M175 255H985" stroke="#38BDF8" stroke-width="2" fill="none" marker-start="url(#ah)" marker-end="url(#ah)" /><text x="580" y="240" text-anchor="middle" fill="#D5E1F2"><tspan fill="#38BDF8" font-weight="500">AUTH1</tspan>  signatures vérifiées des deux côtés</text></g>
+<g class="fragment" data-fragment-index="4"><path d="M175 320H985" stroke="#38BDF8" stroke-width="2" fill="none" marker-start="url(#ah)" marker-end="url(#ah)" stroke-dasharray="8 6"/><text x="580" y="305" text-anchor="middle" fill="#D5E1F2"><tspan fill="#38BDF8" font-weight="500">EXCHANGE</tspan>  données chiffrées (optionnel)</text></g>
+<g class="fragment" data-fragment-index="5"><path d="M985 385H175" stroke="#F59E0B" stroke-width="2" fill="none" marker-end="url(#aw)" /><text x="580" y="370" text-anchor="middle" fill="#D5E1F2"><tspan fill="#F59E0B" font-weight="500">CONTROL FLOW</tspan>  résultat : porte ouverte</text></g>
+</svg>
+  <p class="src">Fig. 1 — Déroulé simplifié d'une transaction Aliro, d'après github.com/kormax/aliro. Durée : une fraction de seconde.</p>
+</section>
+
+<section>
+  <h2>La sécurité</h2>
+  <div class="grid g2">
+    <div class="card fragment fade-up"><div class="ic"><svg class="i"><use href="#key"/></svg></div><h3>Deux clés</h3><p>Une clé privée, secrète, qui ne quitte jamais l'appareil. Une clé publique, qu'on peut montrer à tous.</p></div>
+    <div class="card fragment fade-up"><div class="ic"><svg class="i"><use href="#refresh"/></svg></div><h3>Authentification mutuelle</h3><p>Le téléphone vérifie la serrure, et la serrure vérifie le téléphone.</p></div>
+  </div>
+  <div class="eq">signature = ECDSA( clé_privée , données_de_la_transaction )<br>canal chiffré = AES-GCM</div>
+  <p class="src">Sources : CSA ; EC Magazine, 15 juin 2026 ; github.com/kormax/aliro</p>
+</section>
+
+<section>
+  <h2>Rapide et respectueux de la vie privée</h2>
+  <div class="grid g2">
+    <div class="card fragment fade-up"><div class="ic"><svg class="i"><use href="#clock"/></svg></div><h3>Mode<span class="tag w">STANDARD</span></h3><p>Premier passage : échange complet avec signatures. Plus long, mais fonctionne toujours.</p></div>
+    <div class="card fragment fade-up"><div class="ic"><svg class="i"><use href="#zap"/></svg></div><h3>Mode<span class="tag">FAST</span></h3><p>Passages suivants : le téléphone et la serrure se reconnaissent. Aussi rapide qu'un badge.</p></div>
+  </div>
+  <ul style="margin-top:.7em;font-size:26px">
+    <li class="fragment fade-up">Le téléphone ne révèle son identité qu'après avoir vérifié la serrure</li>
+    <li class="fragment fade-up">Un faux lecteur ne peut pas te suivre à la trace</li>
+  </ul>
+  <p class="src">Source : github.com/kormax/aliro</p>
+</section>
+
+<section>
+  <h2>Comparaison</h2>
+  <table>
+    <tr><th>Solution</th><th>Porté par</th><th>Usage</th><th>Interopérable</th></tr>
+    <tr class="me"><td>Aliro</td><td>CSA (standard ouvert)</td><td>Portes : maison, bureaux</td><td class="y">Oui, multi-marques</td></tr>
+    <tr><td>Apple Home Key</td><td>Apple</td><td>Serrures HomeKit</td><td class="n">Écosystème Apple</td></tr>
+    <tr><td>CCC Digital Key</td><td>Car Connectivity Consortium</td><td>Voitures</td><td class="y">Entre constructeurs</td></tr>
+    <tr><td>Badge classique</td><td>Fabricants de lecteurs</td><td>Bureaux</td><td class="n">Souvent propriétaire</td></tr>
+  </table>
+  <p class="src">Sources : github.com/kormax/aliro (Aliro reprend la logique de Home Key et CarKey) ; à compléter avec les sites des consortiums</p>
+</section>
+
+<section>
+  <h2>Limites et critiques</h2>
+  <div class="grid g2">
+    <div class="card fragment fade-up"><div class="ic"><svg class="i"><use href="#help"/></svg></div><h3>Adoption incertaine</h3><p>Standard très récent : son succès dépend des fabricants.</p></div>
+    <div class="card fragment fade-up"><div class="ic"><svg class="i"><use href="#link"/></svg></div><h3>Partage de clés</h3><p>Prévu dans une version future, absent de la 1.0.</p></div>
+    <div class="card fragment fade-up"><div class="ic"><svg class="i"><use href="#lock"/></svg></div><h3>Nouveau pour l'industrie</h3><p>La gestion de clés publiques est peu familière aux intégrateurs.</p></div>
+    <div class="card fragment fade-up"><div class="ic"><svg class="i"><use href="#flask"/></svg></div><h3>Versions en circulation</h3><p>Des versions 0.9 et 1.0 coexistent dans les Wallets.</p></div>
+  </div>
+  <p class="src">Sources : EC Magazine, 15 juin 2026 ; Hackster.io ; github.com/kormax/aliro</p>
+</section>
+
+<section>
+  <h2>Conclusion</h2>
+  <ul>
+    <li class="fragment fade-up"><b>Le problème :</b> trop de systèmes d'accès incompatibles</li>
+    <li class="fragment fade-up"><b>La solution :</b> un standard commun, intégré aux Wallets</li>
+    <li class="fragment fade-up"><b>La force :</b> clés publiques, rapidité, vie privée</li>
+    <li class="fragment fade-up"><b>La suite :</b> adoption par les fabricants et partage de clés</li>
+  </ul>
+  <p class="lead fragment fade-up" style="margin-top:1.3em;color:var(--acc);font-weight:600">Merci. Place à la démonstration.</p>
+</section>
+
+<section>
+  <h2>Références</h2>
+  <ul style="font-size:24px">
+    <li>CSA, « Introducing Aliro 1.0 », communiqué, 2026 — csa-iot.org/all-solutions/aliro</li>
+    <li>kormax, « Aliro access credential protocol research » — github.com/kormax/aliro</li>
+    <li>G. Halfacree, « Aliro Smart Lock Standard Hits 1.0 », Hackster.io, 2026</li>
+    <li>D. L. O'Mara, « Eyeing Aliro 1.0 », EC Magazine, 15 juin 2026</li>
+  </ul>
+</section>
+
+</div></div>
+
+<script src="dist/reveal.js"></script>
+<script src="dist/plugin/notes.js"></script>
+<script src="dist/plugin/markdown.js"></script>
+<script src="dist/plugin/highlight.js"></script>
+<script>
+Reveal.initialize({
+  width: 1100, height: 720, margin: 0.04,
+  hash: true, slideNumber: 'c/t', center: true,
+  transition: 'fade', controls: true, progress: true,
+  plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
+});
+</script>
+</body>
+</html>
