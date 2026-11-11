@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <p align="center">
   <a href="https://revealjs.com">
   <img src="https://hakim-static.s3.amazonaws.com/reveal-js/logo/v1/reveal-black-text-sticker.png" alt="reveal.js" width="500">
@@ -30,3 +31,7 @@ Want to create reveal.js presentation in a graphical editor? Try <https://slides
 <div align="center">
   MIT licensed | Copyright © 2011-2026 Hakim El Hattab, https://hakim.se
 </div>
+=======
+# Aliro
+serrure connecté 
+>>>>>>> 9e2c0ae78f69cd5ac55046c5919d5794a2ea6836
