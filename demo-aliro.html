@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0A101C">
+  <title>Démo interactive Aliro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{color-scheme:dark;--bg:#0A101C;--panel:#111D33;--panel2:#0D1728;--line:#2A3F60;--ink:#F2F7FF;--mut:#B4C4DC;--dim:#8DA2BF;--acc:#38BDF8;--green:#34D399;--red:#FB7185;--warm:#F59E0B}
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;background:var(--bg);background-image:linear-gradient(rgba(56,189,248,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(56,189,248,.045) 1px,transparent 1px);background-size:40px 40px;color:var(--ink);font:16px/1.5 'IBM Plex Sans','Segoe UI',sans-serif}
+    button{font:inherit}
+    .shell{max-width:1220px;margin:0 auto;padding:28px 30px 40px}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:38px}
+    .brand{font:500 14px 'IBM Plex Mono',monospace;color:var(--acc);letter-spacing:.08em;text-transform:uppercase}
+    .back{color:var(--mut);text-decoration:none;font-size:14px}.back:hover{color:var(--acc)}
+    header{max-width:760px;margin-bottom:26px}
+    .eyebrow{margin:0 0 8px;color:var(--acc);font:500 13px 'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.1em}
+    h1{margin:0;color:#fff;font-size:clamp(34px,5vw,54px);line-height:1.08;letter-spacing:-.035em}
+    .intro{color:var(--mut);font-size:18px;margin:14px 0 0;max-width:680px}
+    .notice{display:flex;gap:12px;align-items:flex-start;border:1px solid rgba(245,158,11,.35);border-left:4px solid var(--warm);background:rgba(245,158,11,.07);border-radius:8px;padding:12px 16px;color:#FDE7B0;font-size:14px;margin:22px 0 24px}
+    .notice strong{color:#fff}
+    .layout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(300px,.85fr);gap:20px;align-items:start}
+    .panel{background:rgba(17,29,51,.96);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+    .panel-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:18px 20px;border-bottom:1px solid var(--line)}
+    .panel-head h2{font-size:17px;margin:0;color:#fff}
+    .badge{display:inline-flex;align-items:center;gap:7px;padding:5px 10px;border:1px solid var(--line);border-radius:999px;color:var(--mut);font:12px 'IBM Plex Mono',monospace;white-space:nowrap}
+    .badge::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--dim)}
+    .badge[data-state="running"]::before{background:var(--acc);box-shadow:0 0 10px var(--acc)}
+    .badge[data-state="success"]::before{background:var(--green)}
+    .badge[data-state="blocked"]::before{background:var(--red)}
+    .stage{padding:20px}
+    .scenario-row{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px}
+    .scenario-label{font-size:13px;color:var(--dim);margin:0 0 7px}
+    .scenario-buttons{display:flex;gap:8px;flex-wrap:wrap}
+    .scenario-button{border:1px solid var(--line);background:var(--panel2);color:var(--mut);padding:8px 12px;border-radius:7px;cursor:pointer;font-size:13px;transition:.18s ease}
+    .scenario-button:hover{border-color:var(--acc);color:#fff}
+    .scenario-button[aria-pressed="true"]{border-color:var(--acc);background:rgba(56,189,248,.12);color:#fff;box-shadow:inset 0 0 0 1px rgba(56,189,248,.12)}
+    .diagram{display:grid;grid-template-columns:1fr minmax(150px,.8fr) 1fr;gap:14px;align-items:center;min-height:220px;padding:22px 12px;background:rgba(4,10,19,.35);border:1px solid rgba(42,63,96,.7);border-radius:10px;position:relative}
+    .endpoint{text-align:center;position:relative;z-index:1}
+    .device{width:104px;height:116px;margin:0 auto 10px;border:1px solid var(--line);border-radius:17px;background:linear-gradient(145deg,#142440,#0B1424);display:grid;place-items:center;color:var(--acc);transition:.25s ease}
+    .device svg{width:44px;height:44px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+    .endpoint.lock .device{border-radius:12px;width:116px;height:116px;color:var(--warm)}
+    .endpoint-name{font-weight:600;color:#fff;font-size:14px}
+    .endpoint-detail{font-size:12px;color:var(--dim);margin-top:2px}
+    .device[data-status="ok"]{color:var(--green);border-color:rgba(52,211,153,.7);box-shadow:0 0 24px rgba(52,211,153,.12)}
+    .device[data-status="error"]{color:var(--red);border-color:rgba(251,113,133,.75);box-shadow:0 0 24px rgba(251,113,133,.12)}
+    .channel{height:2px;background:var(--line);position:relative;align-self:center}
+    .channel::after{content:"";position:absolute;left:0;top:-4px;width:10px;height:10px;border-radius:50%;background:var(--dim);opacity:0}
+    .channel.active{background:rgba(56,189,248,.45)}
+    .channel.active::after{opacity:1;animation:travel 1.15s linear infinite}
+    .channel.secure{background:rgba(52,211,153,.75)}
+    .channel.blocked{background:rgba(251,113,133,.55)}
+    @keyframes travel{from{left:0}to{left:calc(100% - 10px)}}
+    .wire-label{position:absolute;left:50%;transform:translateX(-50%);top:-27px;white-space:nowrap;color:var(--dim);font:11px 'IBM Plex Mono',monospace}
+    .id-shield{position:absolute;left:50%;transform:translateX(-50%);bottom:-33px;padding:3px 8px;border:1px solid rgba(56,189,248,.35);border-radius:5px;background:#0B1424;color:var(--acc);font:10px 'IBM Plex Mono',monospace;white-space:nowrap}
+    .id-shield.revealed{border-color:rgba(52,211,153,.5);color:var(--green)}
+    .status-box{display:flex;gap:11px;align-items:flex-start;margin-top:18px;padding:13px 15px;border-radius:8px;background:var(--panel2);border:1px solid var(--line);min-height:68px}
+    .status-icon{flex:0 0 22px;height:22px;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;color:var(--dim);font-size:13px}
+    .status-box[data-tone="success"]{border-color:rgba(52,211,153,.4)}.status-box[data-tone="success"] .status-icon{color:var(--green);border-color:var(--green)}
+    .status-box[data-tone="error"]{border-color:rgba(251,113,133,.4)}.status-box[data-tone="error"] .status-icon{color:var(--red);border-color:var(--red)}
+    .status-copy strong{display:block;color:#fff;font-size:14px;margin-bottom:2px}.status-copy span{font-size:13px;color:var(--mut)}
+    .controls{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:18px}
+    .control-group{display:flex;gap:9px}
+    .button{border:1px solid var(--line);background:transparent;color:var(--mut);padding:10px 15px;border-radius:7px;cursor:pointer;font-weight:600;font-size:14px;transition:.18s ease}
+    .button:hover:not(:disabled){border-color:var(--acc);color:#fff}
+    .button:disabled{opacity:.42;cursor:not-allowed}
+    .button.primary{background:var(--acc);color:#06111D;border-color:var(--acc)}.button.primary:hover:not(:disabled){background:#7DD3FC}
+    .button:focus-visible,.scenario-button:focus-visible,.back:focus-visible{outline:2px solid #fff;outline-offset:3px}
+    .progress-copy{color:var(--dim);font:12px 'IBM Plex Mono',monospace}
+    .steps{padding:8px 20px 18px}
+    .step{display:grid;grid-template-columns:32px 1fr auto;gap:11px;align-items:center;padding:12px 0;border-bottom:1px solid rgba(42,63,96,.55);opacity:.55;transition:.2s ease}
+    .step:last-child{border-bottom:0}
+    .step-number{width:28px;height:28px;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;color:var(--dim);font:12px 'IBM Plex Mono',monospace}
+    .step-name{font-size:13px;color:#fff;font-weight:600}.step-detail{font-size:12px;color:var(--dim);margin-top:1px}
+    .step-state{font:10px 'IBM Plex Mono',monospace;color:var(--dim);text-transform:uppercase}
+    .step.current{opacity:1}.step.current .step-number{border-color:var(--acc);color:var(--acc);box-shadow:0 0 12px rgba(56,189,248,.16)}.step.current .step-state{color:var(--acc)}
+    .step.done{opacity:1}.step.done .step-number{border-color:var(--green);color:var(--green)}.step.done .step-state{color:var(--green)}
+    .step.failed{opacity:1}.step.failed .step-number{border-color:var(--red);color:var(--red)}.step.failed .step-state{color:var(--red)}
+    .legend{padding:15px 20px;border-top:1px solid var(--line);font-size:12px;color:var(--dim)}
+    .legend span{color:var(--acc);font-family:'IBM Plex Mono',monospace}
+    .footer{display:flex;justify-content:space-between;gap:16px;margin-top:18px;color:var(--dim);font-size:12px}
+    @media(max-width:820px){.layout{grid-template-columns:1fr}.topbar{margin-bottom:28px}.steps{display:grid;grid-template-columns:1fr 1fr;column-gap:18px}.step:nth-last-child(2){border-bottom:0}}
+    @media(max-width:560px){.shell{padding:20px 16px 28px}.scenario-row{align-items:flex-start;flex-direction:column}.diagram{grid-template-columns:1fr 90px 1fr;gap:7px;padding:18px 8px}.device{width:76px;height:94px}.endpoint.lock .device{width:88px;height:94px}.endpoint-name{font-size:12px}.endpoint-detail{font-size:10px}.wire-label{font-size:9px}.id-shield{font-size:8px}.steps{grid-template-columns:1fr}.step:nth-last-child(2){border-bottom:1px solid rgba(42,63,96,.55)}.controls{align-items:flex-start;flex-direction:column-reverse}.footer{flex-direction:column;gap:4px}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <nav class="topbar" aria-label="Navigation principale">
+      <div class="brand">Aliro <span style="color:var(--dim)">/ démonstration</span></div>
+      <a class="back" href="index.html">← Retour au diaporama</a>
+    </nav>
+    <header>
+      <p class="eyebrow">Simulation interactive · Aliro 1.0</p>
+      <h1>Une clé numérique.<br>Un accès vérifié.</h1>
+      <p class="intro">Suivez les échanges entre le Wallet du téléphone et le lecteur. Puis testez ce qui se passe face à un lecteur qui ne peut pas prouver son identité.</p>
+    </header>
+    <div class="notice" role="note"><span aria-hidden="true">ⓘ</span><div><strong>Simulation pédagogique</strong> — cette interface illustre un déroulé simplifié. Elle ne communique pas avec une serrure réelle et ne met pas en œuvre la cryptographie Aliro.</div></div>
+
+    <div class="layout">
+      <section class="panel" aria-labelledby="simulation-title">
+        <div class="panel-head">
+          <h2 id="simulation-title">Échange d’accès</h2>
+          <span class="badge" id="runBadge" data-state="idle" aria-live="polite">Prêt</span>
+        </div>
+        <div class="stage">
+          <div class="scenario-row">
+            <div>
+              <p class="scenario-label">Choisissez un scénario</p>
+              <div class="scenario-buttons" role="group" aria-label="Scénario du lecteur">
+                <button class="scenario-button" type="button" data-scenario="valid" aria-pressed="true">Lecteur légitime</button>
+                <button class="scenario-button" type="button" data-scenario="unknown" aria-pressed="false">Lecteur inconnu</button>
+              </div>
+            </div>
+            <span class="badge" id="readerBadge" data-state="idle">Lecteur prêt</span>
+          </div>
+
+          <div class="diagram" aria-label="Schéma du téléphone et du lecteur">
+            <div class="endpoint">
+              <div class="device" id="phoneDevice" data-status="idle" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/><path d="M9 6h6"/></svg>
+              </div>
+              <div class="endpoint-name">Téléphone</div><div class="endpoint-detail">Wallet Aliro · clé protégée</div>
+            </div>
+            <div class="channel" id="channel" aria-hidden="true"><span class="wire-label" id="wireLabel">Aucun échange</span><span class="id-shield" id="idShield">Identifiants masqués</span></div>
+            <div class="endpoint lock">
+              <div class="device" id="lockDevice" data-status="idle" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="12" rx="2"/><path d="M8 10V7a4 4 0 1 1 8 0v3"/><path d="M12 14v3"/></svg>
+              </div>
+              <div class="endpoint-name">Lecteur</div><div class="endpoint-detail" id="readerDetail">Identité à vérifier</div>
+            </div>
+          </div>
+
+          <div class="status-box" id="statusBox" data-tone="neutral" role="status" aria-live="polite">
+            <div class="status-icon" id="statusIcon" aria-hidden="true">i</div>
+            <div class="status-copy"><strong id="statusTitle">Prêt à commencer</strong><span id="statusText">Choisissez un scénario, puis lancez l’échange étape par étape.</span></div>
+          </div>
+          <div class="controls">
+            <span class="progress-copy" id="progressCopy">0 / 5 étapes</span>
+            <div class="control-group">
+              <button class="button" id="resetButton" type="button">Recommencer</button>
+              <button class="button primary" id="nextButton" type="button">Lancer l’échange →</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="panel" aria-labelledby="steps-title">
+        <div class="panel-head"><h2 id="steps-title">Les étapes du protocole</h2><span class="badge" id="modeBadge" data-state="idle">Mode standard</span></div>
+        <div class="steps" id="stepsList">
+          <div class="step" data-step="0"><span class="step-number">01</span><div><div class="step-name">SELECT</div><div class="step-detail">Le Wallet sélectionne l’applet Aliro</div></div><span class="step-state">En attente</span></div>
+          <div class="step" data-step="1"><span class="step-number">02</span><div><div class="step-name">AUTH0</div><div class="step-detail">Négociation des clés éphémères (ECDH)</div></div><span class="step-state">En attente</span></div>
+          <div class="step" data-step="2"><span class="step-number">03</span><div><div class="step-name">AUTH1</div><div class="step-detail">Certificats et signatures sont vérifiés</div></div><span class="step-state">En attente</span></div>
+          <div class="step" data-step="3"><span class="step-number">04</span><div><div class="step-name">Canal sécurisé</div><div class="step-detail">Établissement du canal chiffré AES-GCM</div></div><span class="step-state">En attente</span></div>
+          <div class="step" data-step="4"><span class="step-number">05</span><div><div class="step-name">Accès</div><div class="step-detail">Le lecteur autorise l’ouverture</div></div><span class="step-state">En attente</span></div>
+        </div>
+        <div class="legend"><span>ECDH</span> · accord de clé <span>ECDSA</span> · signature <span>AES-GCM</span> · chiffrement du canal</div>
+      </aside>
+    </div>
+    <footer class="footer"><span>Astuce présentation : avancez étape par étape et demandez à la classe de prévoir le résultat.</span><span>← → boutons · Entrée pour avancer</span></footer>
+  </main>
+
+  <script>
+    (() => {
+      const steps = [...document.querySelectorAll('.step')];
+      const scenarioButtons = [...document.querySelectorAll('[data-scenario]')];
+      const nextButton = document.getElementById('nextButton');
+      const resetButton = document.getElementById('resetButton');
+      const channel = document.getElementById('channel');
+      const wireLabel = document.getElementById('wireLabel');
+      const idShield = document.getElementById('idShield');
+      const phoneDevice = document.getElementById('phoneDevice');
+      const lockDevice = document.getElementById('lockDevice');
+      const statusBox = document.getElementById('statusBox');
+      const statusIcon = document.getElementById('statusIcon');
+      const statusTitle = document.getElementById('statusTitle');
+      const statusText = document.getElementById('statusText');
+      const progressCopy = document.getElementById('progressCopy');
+      const runBadge = document.getElementById('runBadge');
+      const readerBadge = document.getElementById('readerBadge');
+      const readerDetail = document.getElementById('readerDetail');
+      const modeBadge = document.getElementById('modeBadge');
+      const stepLabels = ['SELECT · applet Aliro sélectionnée', 'AUTH0 · clés éphémères négociées', 'AUTH1 · authentification en cours', 'Canal chiffré AES-GCM établi', 'Accès accordé · porte ouverte'];
+      const stepMessages = [
+        ['Applet sélectionnée', 'Le téléphone et le lecteur démarrent le protocole Aliro.'],
+        ['Clés éphémères échangées', 'ECDH permet de préparer une clé de session sans secret partagé statique.'],
+        ['Identités vérifiées', 'Les certificats et signatures authentifient les deux parties.'],
+        ['Canal protégé établi', 'Les échanges suivants sont chiffrés avec AES-GCM. Les identifiants peuvent maintenant être révélés.'],
+        ['Accès accordé', 'Les parties authentifiées peuvent terminer la transaction d’accès.']
+      ];
+      let scenario = 'valid';
+      let index = -1;
+      let finished = false;
+
+      function setStatus(title, text, tone='neutral', icon='i') {
+        statusBox.dataset.tone = tone;
+        statusTitle.textContent = title;
+        statusText.textContent = text;
+        statusIcon.textContent = icon;
+      }
+      function reset() {
+        index = -1; finished = false;
+        steps.forEach((step, i) => {
+          step.className = 'step';
+          step.querySelector('.step-state').textContent = 'En attente';
+          step.querySelector('.step-number').textContent = String(i + 1).padStart(2, '0');
+        });
+        channel.className = 'channel';
+        wireLabel.textContent = 'Aucun échange';
+        idShield.textContent = 'Identifiants masqués';
+        idShield.classList.remove('revealed');
+        phoneDevice.dataset.status = 'idle';
+        lockDevice.dataset.status = 'idle';
+        readerDetail.textContent = scenario === 'valid' ? 'Identité à vérifier' : 'Lecteur inconnu';
+        readerBadge.textContent = scenario === 'valid' ? 'Lecteur prêt' : 'Identité non vérifiée';
+        readerBadge.dataset.state = 'idle';
+        runBadge.textContent = 'Prêt'; runBadge.dataset.state = 'idle';
+        modeBadge.textContent = 'Mode standard'; modeBadge.dataset.state = 'idle';
+        progressCopy.textContent = '0 / 5 étapes';
+        nextButton.disabled = false; nextButton.textContent = 'Lancer l’échange →';
+        setStatus('Prêt à commencer', 'Choisissez un scénario, puis lancez l’échange étape par étape.');
+      }
+      function failAuthentication() {
+        finished = true;
+        steps[2].classList.remove('current');
+        steps[2].classList.add('failed');
+        steps[2].querySelector('.step-state').textContent = 'Échec';
+        steps[2].querySelector('.step-number').textContent = '×';
+        channel.className = 'channel blocked';
+        wireLabel.textContent = 'AUTH1 · preuve invalide';
+        phoneDevice.dataset.status = 'ok';
+        lockDevice.dataset.status = 'error';
+        readerBadge.textContent = 'Authentification refusée';
+        readerBadge.dataset.state = 'blocked';
+        runBadge.textContent = 'Échange bloqué'; runBadge.dataset.state = 'blocked';
+        progressCopy.textContent = '2 / 5 étapes · arrêt';
+        nextButton.disabled = true; nextButton.textContent = 'Échange terminé';
+        setStatus('Accès refusé', 'Le lecteur ne présente pas une preuve valide. Le canal chiffré n’est pas établi et les identifiants restent masqués.', 'error', '×');
+      }
+      function advance() {
+        if (finished) return;
+        index++;
+        if (index > 0) {
+          const previous = steps[index - 1];
+          previous.classList.remove('current'); previous.classList.add('done');
+          previous.querySelector('.step-state').textContent = 'Validé';
+        }
+        if (scenario === 'unknown' && index === 2) {
+          steps[2].classList.add('current');
+          steps[2].querySelector('.step-state').textContent = 'Vérification';
+          progressCopy.textContent = '2 / 5 étapes';
+          runBadge.textContent = 'Authentification'; runBadge.dataset.state = 'running';
+          wireLabel.textContent = 'AUTH1 · vérification';
+          channel.className = 'channel active';
+          setStatus('Vérification du lecteur', 'Le certificat du lecteur est inconnu : la transaction va s’arrêter avant de révéler les identifiants.');
+          window.setTimeout(() => { if (scenario === 'unknown' && index === 2 && !finished) failAuthentication(); }, 900);
+          return;
+        }
+        if (index >= steps.length) {
+          finished = true;
+          progressCopy.textContent = '5 / 5 étapes';
+          runBadge.textContent = 'Accès accordé'; runBadge.dataset.state = 'success';
+          readerBadge.textContent = 'Lecteur authentifié'; readerBadge.dataset.state = 'success';
+          phoneDevice.dataset.status = 'ok'; lockDevice.dataset.status = 'ok';
+          nextButton.disabled = true; nextButton.textContent = 'Échange terminé';
+          wireLabel.textContent = 'Transaction sécurisée'; channel.className = 'channel secure';
+          setStatus('Accès accordé', 'Téléphone et lecteur sont authentifiés. La serrure autorise l’ouverture.', 'success', '✓');
+          return;
+        }
+        const step = steps[index];
+        step.classList.add('current');
+        step.querySelector('.step-state').textContent = 'En cours';
+        progressCopy.textContent = `${index} / 5 étapes`;
+        runBadge.textContent = 'Échange en cours'; runBadge.dataset.state = 'running';
+        wireLabel.textContent = stepLabels[index]; channel.className = 'channel active';
+        phoneDevice.dataset.status = 'active';
+        setStatus(...stepMessages[index]);
+        if (index === 2 && scenario === 'valid') {
+          readerBadge.textContent = 'Lecteur authentifié'; readerBadge.dataset.state = 'success';
+          lockDevice.dataset.status = 'ok';
+        }
+        if (index === 3) {
+          channel.className = 'channel secure';
+          idShield.textContent = 'Canal établi · identifiants révélés';
+          idShield.classList.add('revealed');
+          modeBadge.textContent = 'Canal AES-GCM'; modeBadge.dataset.state = 'success';
+        }
+        nextButton.textContent = index === 4 ? 'Voir le résultat →' : 'Étape suivante →';
+      }
+      scenarioButtons.forEach(button => button.addEventListener('click', () => {
+        scenario = button.dataset.scenario;
+        scenarioButtons.forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+        reset();
+      }));
+      nextButton.addEventListener('click', advance);
+      resetButton.addEventListener('click', reset);
+      document.addEventListener('keydown', event => {
+        if (event.key === 'Enter' && !event.repeat && !['BUTTON','A'].includes(document.activeElement.tagName)) advance();
+        if (event.key === 'ArrowRight' && !event.repeat) advance();
+        if (event.key === 'ArrowLeft' && !event.repeat) reset();
+      });
+      reset();
+    })();
+  </script>
+</body>
+</html>
