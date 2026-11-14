@@ -122,12 +122,13 @@
 </section>
 
 <section>
-  <h2>La sécurité</h2>
-  <div class="grid g2">
-    <div class="card fragment fade-up"><div class="ic"><svg class="i"><use href="#key"/></svg></div><h3>Deux clés</h3><p>Une clé privée, secrète, qui ne quitte jamais l'appareil. Une clé publique, qu'on peut montrer à tous.</p></div>
-    <div class="card fragment fade-up"><div class="ic"><svg class="i"><use href="#refresh"/></svg></div><h3>Authentification mutuelle</h3><p>Le téléphone vérifie la serrure, et la serrure vérifie le téléphone.</p></div>
+  <h2>Sécurité et vie privée</h2>
+  <div class="grid g3 security-grid">
+    <div class="card fragment fade-up"><div class="ic"><svg class="i"><use href="#key"/></svg></div><h3>Cryptographie PKI</h3><p>Authentification mutuelle par clés publiques et certificats X.509 (ECDSA/ECDH), sans secret partagé statique vulnérable.</p></div>
+    <div class="card fragment fade-up"><div class="ic"><svg class="i"><use href="#lock"/></svg></div><h3>Secure Element obligatoire</h3><p>Clés privées et certificats résident dans un composant matériel sécurisé (SE/HSM), résistant aux intrusions, jamais en mémoire flash standard.</p></div>
+    <div class="card fragment fade-up"><div class="ic"><svg class="i"><use href="#users"/></svg></div><h3>Identité protégée</h3><p>Le terminal masque ses identifiants jusqu’à l’authentification du lecteur et l’établissement d’un canal chiffré.</p></div>
   </div>
-  <div class="eq">signature = ECDSA( clé_privée , données_de_la_transaction )<br>canal chiffré = AES-GCM</div>
+  <div class="eq">échange de clés : ECDH · signatures : ECDSA · canal chiffré : AES-GCM</div>
   <p class="src">Sources : CSA ; EC Magazine, 15 juin 2026 ; github.com/kormax/aliro</p>
 </section>
 
@@ -138,8 +139,8 @@
     <div class="card fragment fade-up"><div class="ic"><svg class="i"><use href="#zap"/></svg></div><h3>Mode<span class="tag">FAST</span></h3><p>Passages suivants : le téléphone et la serrure se reconnaissent. Aussi rapide qu'un badge.</p></div>
   </div>
   <ul style="margin-top:.7em;font-size:26px">
-    <li class="fragment fade-up">Le téléphone ne révèle son identité qu'après avoir vérifié la serrure</li>
-    <li class="fragment fade-up">Un faux lecteur ne peut pas te suivre à la trace</li>
+    <li class="fragment fade-up">Le terminal masque ses identifiants jusqu’à ce que le lecteur soit authentifié et qu’un canal AES-GCM soit établi</li>
+    <li class="fragment fade-up">Cette divulgation tardive limite le suivi par un lecteur non authentifié</li>
   </ul>
   <p class="src">Source : github.com/kormax/aliro</p>
 </section>
