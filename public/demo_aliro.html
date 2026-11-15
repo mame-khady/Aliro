@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Démo Aliro – transaction simulée</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0A101C;--panel:#101A2C;--line:#23344F;--ink:#E7EEF8;--mut:#8DA2BF;--acc:#38BDF8;--warm:#F59E0B;--ok:#34D399;--bad:#F87171}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background-color:var(--bg);background-image:linear-gradient(rgba(56,189,248,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(56,189,248,.05) 1px,transparent 1px);background-size:40px 40px;color:var(--ink);font-family:'IBM Plex Sans','Segoe UI',system-ui,sans-serif;padding:20px 28px;display:flex;flex-direction:column;gap:16px}
+.mono{font-family:'IBM Plex Mono',ui-monospace,Consolas,monospace}
+header{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;border-bottom:1px solid var(--line);padding-bottom:12px;position:relative}
+header::after{content:"";position:absolute;left:0;bottom:-1px;width:90px;height:3px;background:var(--acc)}
+h1{margin:0;font-size:26px;font-weight:600}
+.note{font-size:13px;color:var(--mut);max-width:560px;text-align:right}
+main{display:grid;grid-template-columns:1.15fr .85fr;gap:20px;flex:1;min-height:0}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.left{display:flex;flex-direction:column;gap:14px;min-height:0}
+svg text{font-family:'IBM Plex Mono',monospace}
+.cap{font-size:13px;fill:var(--mut)}.nm{font-size:17px;fill:var(--ink);font-family:'IBM Plex Sans',sans-serif!important;font-weight:600}
+.box{fill:#0D1626;stroke:var(--line);stroke-width:1.5}
+.ico{fill:none;stroke:var(--acc);stroke-linecap:round;stroke-linejoin:round}
+#chan{stroke:var(--line);stroke-width:2.5;stroke-dasharray:7 7;fill:none;transition:stroke .3s}
+#chan.sec{stroke:var(--acc);stroke-dasharray:none;stroke-width:3.5}
+#lockg,#pkt,#dOpen{display:none}
+#pkt text{fill:var(--c);font-size:14px;text-anchor:middle}
+#door.open #dOpen{display:inline}#door.open #dClosed{display:none}
+#door .ico{stroke:var(--bad)}#door.open .ico{stroke:var(--ok)}
+#doorLbl{font-size:15px;fill:var(--mut);text-anchor:middle}
+#status{padding:12px 16px;border-radius:8px;border:1px solid var(--line);font-size:17px;font-weight:600;transition:all .25s}
+#status.run{border-color:var(--acc);color:var(--acc)}#status.ok{border-color:var(--ok);color:var(--ok);background:rgba(52,211,153,.08)}
+#status.bad{border-color:var(--bad);color:var(--bad);background:rgba(248,113,113,.08)}#status.warn{border-color:var(--warm);color:var(--warm)}
+#status.idle{color:var(--mut)}
+.ctl{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+button{font:600 15px 'IBM Plex Sans',sans-serif;padding:10px 16px;border-radius:8px;border:1px solid var(--acc);background:transparent;color:var(--acc);cursor:pointer}
+button:hover:not(:disabled){background:rgba(56,189,248,.12)}
+button.pri{background:var(--acc);color:#06121f}button.pri:hover:not(:disabled){background:#6ccdfa}
+button.dng{border-color:var(--bad);color:var(--bad)}button.dng:hover:not(:disabled){background:rgba(248,113,113,.12)}
+button.gh{border-color:var(--line);color:var(--mut)}
+button:disabled{opacity:.4;cursor:not-allowed}
+button:focus-visible,input:focus-visible{outline:2px solid #fff;outline-offset:2px}
+label{font-size:14px;color:var(--mut);display:flex;gap:6px;align-items:center}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th{font-family:'IBM Plex Mono',monospace;font-weight:500;color:var(--mut);text-align:left;padding:6px 10px;border-bottom:2px solid var(--acc);font-size:12px}
+td{padding:7px 10px;border-bottom:1px solid var(--line)}
+td.v{font-family:'IBM Plex Mono',monospace;color:var(--acc)}
+.small{font-size:12px;color:var(--mut);margin:8px 0 0}
+.right{display:flex;flex-direction:column;min-height:0}
+.right h2{margin:0 0 10px;font-size:16px;font-weight:600;color:var(--mut)}
+#log{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;min-height:300px;padding-right:4px}
+.ent{border:1px solid var(--line);border-left:3px solid var(--acc);border-radius:6px;padding:9px 12px;background:#0D1626}
+.ent.ok{border-left-color:var(--ok)}.ent.bad{border-left-color:var(--bad)}.ent.warm{border-left-color:var(--warm)}
+.cmd{font-family:'IBM Plex Mono',monospace;font-weight:500;font-size:13px;color:var(--acc)}
+.ent.ok .cmd{color:var(--ok)}.ent.bad .cmd{color:var(--bad)}.ent.warm .cmd{color:var(--warm)}
+.ent p{margin:4px 0 0;font-size:15px;line-height:1.4}
+.ent pre{margin:7px 0 0;font:12px/1.5 'IBM Plex Mono',monospace;color:var(--mut);white-space:pre-wrap;word-break:break-all}
+@media(max-width:1000px){main{grid-template-columns:1fr}body{height:auto}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<symbol id="s-phone" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></symbol>
+<symbol id="s-nfc" viewBox="0 0 24 24"><path d="M6 8.32a7.43 7.43 0 0 1 0 7.36"/><path d="M9.46 6.21a11.76 11.76 0 0 1 0 11.58"/><path d="M12.91 4.1a15.91 15.91 0 0 1 .01 15.8"/><path d="M16.37 2a20.16 20.16 0 0 1 0 20"/></symbol>
+<symbol id="s-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+<symbol id="s-dc" viewBox="0 0 24 24"><path d="M18 20V6a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v14"/><path d="M2 20h20"/><path d="M14 12v.01"/></symbol>
+<symbol id="s-do" viewBox="0 0 24 24"><path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4.562v16.157a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.561Z"/></symbol>
+</svg>
+
+<header>
+  <h1>Démo Aliro — une transaction, pas à pas</h1>
+  <p class="note">Simulation simplifiée, mais la cryptographie est réelle (WebCrypto : ECDH, ECDSA, HKDF, AES-GCM). Ce n'est pas une implémentation conforme à la spécification.</p>
+</header>
+
+<main>
+  <section class="left">
+    <div class="panel">
+      <svg viewBox="0 0 800 330" width="100%" role="img" aria-label="Schéma téléphone, lecteur et porte">
+        <rect class="box" x="30" y="40" width="160" height="220" rx="12"/>
+        <use class="ico" href="#s-phone" x="60" y="70" width="100" height="100" style="stroke-width:.7"/>
+        <text class="nm" x="110" y="200" text-anchor="middle">Téléphone</text>
+        <text class="cap" x="110" y="222" text-anchor="middle">clé privée : secrète</text>
+        <text class="cap" x="110" y="242" text-anchor="middle">jamais envoyée</text>
+
+        <rect class="box" x="440" y="40" width="160" height="220" rx="12"/>
+        <use class="ico" href="#s-nfc" x="470" y="70" width="100" height="100" style="stroke-width:.7"/>
+        <text class="nm" x="520" y="200" text-anchor="middle">Lecteur</text>
+        <text class="cap" x="520" y="222" text-anchor="middle">clé du groupe</text>
+        <text class="cap" x="520" y="242" text-anchor="middle">de lecteurs</text>
+
+        <path d="M600 150H650" stroke="#23344F" stroke-width="2.5" fill="none"/>
+        <g id="door" transform="translate(655,70)">
+          <use id="dClosed" class="ico" href="#s-dc" width="110" height="110" style="stroke-width:.7"/>
+          <use id="dOpen" class="ico" href="#s-do" width="110" height="110" style="stroke-width:.7"/>
+        </g>
+        <text id="doorLbl" x="710" y="210">Fermée</text>
+
+        <line id="chan" x1="190" y1="150" x2="440" y2="150"/>
+        <g id="lockg"><use class="ico" href="#s-lock" x="303" y="168" width="34" height="34" style="stroke-width:1.2"/><text class="cap" x="315" y="222" text-anchor="middle" style="fill:#38BDF8">canal chiffré (AES-GCM)</text></g>
+        <g id="pkt"><circle r="9" style="fill:var(--c)"/><text y="-22"></text></g>
+      </svg>
+    </div>
+    <div id="status" class="idle" role="status" aria-live="polite">En attente : lance un passage.</div>
+    <div class="ctl">
+      <button id="bStd" class="pri">Passage normal (STANDARD)</button>
+      <button id="bFast">Passage rapide (FAST)</button>
+      <button id="bRogue" class="dng">Faux lecteur</button>
+      <button id="bReset" class="gh">Réinitialiser</button>
+    </div>
+    <div class="ctl">
+      <label><input type="checkbox" id="step"> Mode pas à pas</label>
+      <button id="bNext" disabled>Suivant</button>
+    </div>
+    <div class="panel">
+      <table>
+        <tr><th>Mode</th><th>Calcul crypto</th><th>Opérations asymétriques</th></tr>
+        <tr><td>STANDARD</td><td class="v" id="mS">—</td><td class="v" id="oS">—</td></tr>
+        <tr><td>FAST</td><td class="v" id="mF">—</td><td class="v" id="oF">—</td></tr>
+      </table>
+      <p class="small">Opérations asymétriques = génération de clés, ECDH, signatures et vérifications. Les durées excluent les animations.</p>
+    </div>
+  </section>
+
+  <section class="panel right">
+    <h2>Journal de la transaction</h2>
+    <div id="log"></div>
+  </section>
+</main>
+
+<script>
+const $=s=>document.querySelector(s);
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const enc=new TextEncoder(), S=crypto.subtle;
+const u8=b=>new Uint8Array(b);
+const hex=b=>[...u8(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
+const sh=(b,n=10)=>hex(b).slice(0,n*2)+'…';
+const cat=(...a)=>{const o=new Uint8Array(a.reduce((s,x)=>s+x.length,0));let p=0;a.forEach(x=>{o.set(x,p);p+=x.length});return o};
+const RED='#F87171',AMBER='#F59E0B',CY='#38BDF8';
+const XP=205,XR=425,Y=150;
+const D=matchMedia('(prefers-reduced-motion: reduce)').matches?1:900;
+
+/* --- cryptographie réelle, avec chronométrage --- */
+let ms=0,ops=0;
+async function T(p,asym){const t=performance.now();const r=await p;ms+=performance.now()-t;if(asym)ops++;return r}
+const genDH=()=>T(S.generateKey({name:'ECDH',namedCurve:'P-256'},true,['deriveBits']),1);
+const genSig=()=>S.generateKey({name:'ECDSA',namedCurve:'P-256'},true,['sign','verify']);
+const raw=k=>S.exportKey('raw',k).then(u8);
+const impDH=r=>S.importKey('raw',r,{name:'ECDH',namedCurve:'P-256'},true,[]);
+const dh=(priv,pub)=>T(S.deriveBits({name:'ECDH',public:pub},priv,256),1).then(u8);
+const hk=async(ikm,salt,info,bits=256)=>{const k=await S.importKey('raw',ikm,'HKDF',false,['deriveBits']);return u8(await T(S.deriveBits({name:'HKDF',hash:'SHA-256',salt,info:enc.encode(info)},k,bits)))};
+const sig=(k,d)=>T(S.sign({name:'ECDSA',hash:'SHA-256'},k,d),1).then(u8);
+const ver=(k,s,d)=>T(S.verify({name:'ECDSA',hash:'SHA-256'},k,s,d),1);
+const aes=b=>S.importKey('raw',b,'AES-GCM',false,['encrypt','decrypt']);
+const iv=(mode,n)=>{const v=new Uint8Array(12);v[7]=mode;new DataView(v.buffer).setUint32(8,n);return v};
+const encr=async(kb,i,d)=>u8(await T(S.encrypt({name:'AES-GCM',iv:i,tagLength:128},await aes(kb),d)));
+const decr=async(kb,i,d)=>u8(await T(S.decrypt({name:'AES-GCM',iv:i,tagLength:128},await aes(kb),d)));
+
+/* --- interface --- */
+const logEl=$('#log'),statusEl=$('#status'),btns=['#bStd','#bFast','#bRogue','#bReset'].map($);
+let K,mode,res={STANDARD:null,FAST:null},nextRes=null;
+function log(cmd,text,detail='',cls=''){const d=document.createElement('div');d.className='ent '+cls;d.innerHTML=`<span class="cmd">${cmd}</span><p>${text}</p>${detail?`<pre>${detail}</pre>`:''}`;logEl.appendChild(d);logEl.scrollTo({top:logEl.scrollHeight,behavior:'smooth'})}
+function setStatus(t,k){statusEl.textContent=t;statusEl.className=k}
+function setDoor(o){$('#door').classList.toggle('open',o);$('#doorLbl').textContent=o?'Ouverte':'Fermée'}
+function setSecure(s){$('#chan').classList.toggle('sec',s);$('#lockg').style.display=s?'inline':'none'}
+function hop(a,b,label,col=CY){return new Promise(r=>{const x1=a==='phone'?XP:XR,x2=b==='phone'?XP:XR,p=$('#pkt');p.querySelector('text').textContent=label;p.style.setProperty('--c',col);p.style.display='inline';const t0=performance.now();(function f(t){const k=Math.min(1,(t-t0)/D),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;p.setAttribute('transform',`translate(${x1+(x2-x1)*e},${Y})`);if(k<1)requestAnimationFrame(f);else{p.style.display='none';r()}})(t0)})}
+async function gate(label){if(!$('#step').checked){await sleep(350);return}const b=$('#bNext');b.disabled=false;b.textContent='Suivant : '+label;await new Promise(r=>nextRes=r);b.disabled=true;b.textContent='Suivant'}
+function begin(m){mode=m;ms=0;ops=0;btns.forEach(b=>b.disabled=true);setDoor(false);setSecure(false);setStatus('Transaction en cours…','run');log('— '+m+' —','Nouvelle transaction.','','warm')}
+function finish(ok,msg,m){setDoor(ok);setStatus(msg,ok?'ok':'bad');if(m){res[m]={ms,ops};render()}btns.forEach(b=>b.disabled=false)}
+function render(){for(const [k,id] of [['STANDARD','S'],['FAST','F']]){const r=res[k];$('#m'+id).textContent=r?r.ms.toFixed(1)+' ms':'—';$('#o'+id).textContent=r?r.ops:'—'}}
+
+/* --- étapes communes --- */
+async function select(){
+  await gate('SELECT');
+  await hop('reader','phone','SELECT');
+  log('SELECT','Le lecteur demande : « as-tu l\'applet Aliro ? »','AID A000000909ACCE5501');
+  await hop('phone','reader','versions 1.0');
+  log('Réponse','Le téléphone répond : « oui, je gère Aliro 1.0 ».','tag 5C : versions 1.0 et 0.9');
+}
+async function control(skR){
+  await gate('CONTROL FLOW');
+  const c=await encr(skR,iv(0,1),enc.encode('OPEN'));
+  await hop('reader','phone','CONTROL FLOW',AMBER);
+  const m=new TextDecoder().decode(await decr(skR,iv(0,1),c));
+  log('CONTROL FLOW','Le lecteur annonce le résultat, chiffré lui aussi. Le téléphone déchiffre : « '+m+' ».',`texte chiffré : ${sh(c,10)}`,'warm');
+}
+
+/* --- passage STANDARD (vrai ou faux lecteur) --- */
+async function standard(rogue){
+  begin(rogue?'FAUX LECTEUR':'STANDARD');
+  try{
+    const rk=rogue?K.rogue:K.reader;
+    await select();
+    await gate('AUTH0');
+    const tx=crypto.getRandomValues(new Uint8Array(16));
+    const re=await genDH(),rePub=await raw(re.publicKey);
+    await hop('reader','phone','AUTH0 + clé éphémère');
+    log('AUTH0 →','Le lecteur envoie une clé éphémère (à usage unique) et un nonce.',`clé éphémère lecteur : ${sh(rePub)}\nnonce : ${sh(tx,16)}`);
+    const pe=await genDH(),pePub=await raw(pe.publicKey);
+    await hop('phone','reader','clé éphémère');
+    log('AUTH0 ←','Le téléphone répond avec sa propre clé éphémère.',`clé éphémère téléphone : ${sh(pePub)}`);
+    const sR=await dh(re.privateKey,await impDH(pePub)),sP=await dh(pe.privateKey,await impDH(rePub));
+    const salt=cat(K.readerId,tx,rePub.slice(1,33));
+    const kR=await hk(sR,salt,'demo-session',512),kP=await hk(sP,salt,'demo-session',512);
+    const skR=kR.slice(0,32),skD=kP.slice(32);
+    log('Calcul','Chacun calcule le secret partagé de son côté (ECDH) : même résultat, sans que le secret ait jamais circulé.',`secret côté lecteur   : ${sh(sR)}\nsecret côté téléphone : ${sh(sP)}\négaux : ${hex(sR)===hex(sP)}`,'ok');
+
+    await gate('AUTH1');
+    const d1=cat(K.readerId,pePub.slice(1,33),rePub.slice(1,33),tx,Uint8Array.of(0x41,0x5d,0x95,0x69));
+    const s1=await sig(rk.privateKey,d1);
+    await hop('reader','phone','AUTH1 + signature');
+    log('AUTH1 →','Le lecteur signe les données de la transaction avec sa clé privée.',`signature (64 octets) : ${sh(s1,12)}`);
+    if(!await ver(K.reader.publicKey,s1,d1)){
+      log('Vérification','Signature invalide : ce lecteur n\'est pas celui que le badge connaît. Le téléphone s\'arrête et ne révèle rien de son identité.','','bad');
+      await hop('phone','reader','refus',RED);
+      finish(false,'Accès refusé : lecteur inconnu',mode==='STANDARD'?'STANDARD':null);return;
+    }
+    log('Vérification','Signature valide : le téléphone sait que le lecteur est légitime.','','ok');
+    const d2=cat(K.readerId,pePub.slice(1,33),rePub.slice(1,33),tx,Uint8Array.of(0x4e,0x88,0x7b,0x4c));
+    const s2=await sig(K.phone.privateKey,d2);
+    const ct=await encr(skD,iv(1,1),cat(s2,Uint8Array.of(0,0)));
+    setSecure(true);
+    await hop('phone','reader','AUTH1 réponse (chiffrée)');
+    log('AUTH1 ←','Le téléphone prouve à son tour son identité. Sa réponse est chiffrée (AES-GCM) : personne d\'autre ne peut la lire.',`texte chiffré : ${sh(ct,14)}`);
+    const pt=await decr(skD,iv(1,1),ct),okP=await ver(K.phone.publicKey,pt.slice(0,64),d2);
+    log('Vérification','Le lecteur déchiffre puis vérifie la signature du téléphone : '+(okP?'valide':'invalide')+'. Authentification mutuelle réussie.','','ok');
+    K.persist=await hk(sR,salt,'demo-persistent',256);
+    log('Mémoire','Les deux gardent un secret commun : au prochain passage, le mode FAST suffira.',`secret persistant : ${sh(K.persist)}`);
+    await control(skR);
+    finish(true,'Porte ouverte (mode STANDARD)','STANDARD');
+  }catch(e){log('Erreur',String(e),'','bad');finish(false,'Erreur : '+e.message)}
+}
+
+/* --- passage FAST --- */
+async function fast(){
+  begin('FAST');
+  try{
+    if(!K.persist){log('FAST','Aucun contexte enregistré : fais d\'abord un passage normal (STANDARD).','','bad');setStatus('Lance d\'abord un passage normal','warn');btns.forEach(b=>b.disabled=false);return}
+    await select();
+    await gate('AUTH0 (FAST)');
+    const tx=crypto.getRandomValues(new Uint8Array(16));
+    const re=await genDH(),rePub=await raw(re.publicKey);
+    await hop('reader','phone','AUTH0 FAST');
+    log('AUTH0 →','Le lecteur demande l\'authentification rapide : « on se connaît déjà ? ».',`clé éphémère : ${sh(rePub)}\nnonce : ${sh(tx,16)}`);
+    const pe=await genDH();
+    const salt=cat(K.readerId,tx,rePub.slice(1,33));
+    const o=await hk(K.persist,salt,'demo-fast',512),fk=o.slice(0,32),skR=o.slice(32);
+    const cg=await encr(fk,new Uint8Array(12),cat(Uint8Array.of(0,0),enc.encode('OK')));
+    await hop('phone','reader','cryptogramme');
+    log('AUTH0 ←','Le téléphone répond avec un cryptogramme que seul le vrai lecteur peut lire : aucune signature à calculer.',`cryptogramme : ${sh(cg,16)}`);
+    const o2=await hk(K.persist,salt,'demo-fast',512),pt=await decr(o2.slice(0,32),new Uint8Array(12),cg);
+    log('Vérification','Le lecteur déchiffre le cryptogramme avec le secret mémorisé : le téléphone est reconnu.','','ok');
+    await control(o2.slice(32));
+    finish(true,'Porte ouverte (mode FAST)','FAST');
+  }catch(e){log('Erreur',String(e),'','bad');finish(false,'Erreur : '+e.message)}
+}
+
+/* --- initialisation --- */
+async function init(){
+  logEl.innerHTML='';res={STANDARD:null,FAST:null};render();setDoor(false);setSecure(false);
+  K={reader:await genSig(),phone:await genSig(),rogue:await genSig(),readerId:crypto.getRandomValues(new Uint8Array(32)),persist:null};
+  setStatus('En attente : lance un passage.','idle');
+  log('Provisionnement','Le badge est déjà dans le téléphone et connaît la clé publique du groupe de lecteurs. La serrure connaît le badge.','','ok');
+  btns.forEach(b=>b.disabled=false);
+}
+$('#bStd').onclick=()=>standard(false);
+$('#bFast').onclick=fast;
+$('#bRogue').onclick=()=>standard(true);
+$('#bReset').onclick=init;
+$('#bNext').onclick=()=>nextRes&&nextRes();
+if(!crypto.subtle){setStatus('WebCrypto indisponible : ouvre ce fichier dans Chrome ou Firefox.','bad')}else init();
+</script>
+</body>
+</html>
